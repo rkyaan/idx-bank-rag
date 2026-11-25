@@ -13,6 +13,7 @@ ENV_KEYS = (
     "CHUNK_MIN_TOKENS",
     "CHUNK_MAX_TOKENS",
     "CHUNK_OVERLAP_RATIO",
+    "MIN_INDEXABLE_TOKENS",
     "TOP_K",
     "RRF_K",
     "RETRIEVAL_METHOD",
@@ -37,6 +38,7 @@ def test_defaults_match_the_approved_plan() -> None:
     assert settings.chunk_min_tokens == 400
     assert settings.chunk_max_tokens == 450
     assert settings.chunk_overlap_ratio == pytest.approx(0.12)
+    assert settings.min_indexable_tokens == 30
     assert settings.top_k == 6
     assert settings.retrieval_method == "hybrid"
     assert settings.session_cooldown_seconds == pytest.approx(3.0)

@@ -84,6 +84,7 @@ class Settings:
     chunk_min_tokens: int = 400
     chunk_max_tokens: int = 450
     chunk_overlap_ratio: float = 0.12
+    min_indexable_tokens: int = 30
     top_k: int = 6
     rrf_k: int = 60
     retrieval_method: str = "hybrid"
@@ -109,6 +110,8 @@ class Settings:
             )
         if self.daily_request_cap < 0:
             raise ValueError("DAILY_REQUEST_CAP must be >= 0")
+        if self.min_indexable_tokens < 0:
+            raise ValueError("MIN_INDEXABLE_TOKENS must be >= 0")
 
     @property
     def llm_configured(self) -> bool:
@@ -124,6 +127,7 @@ class Settings:
             chunk_min_tokens=_as_int("CHUNK_MIN_TOKENS", 400),
             chunk_max_tokens=_as_int("CHUNK_MAX_TOKENS", 450),
             chunk_overlap_ratio=_as_float("CHUNK_OVERLAP_RATIO", 0.12),
+            min_indexable_tokens=_as_int("MIN_INDEXABLE_TOKENS", 30),
             top_k=_as_int("TOP_K", 6),
             rrf_k=_as_int("RRF_K", 60),
             retrieval_method=_lookup("RETRIEVAL_METHOD") or "hybrid",
