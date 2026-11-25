@@ -32,7 +32,7 @@ EMBED_MODEL = "intfloat/multilingual-e5-small"
 EMBED_DIM = 384
 EMBED_MAX_TOKENS = 512
 
-RETRIEVAL_METHODS: tuple[str, ...] = ("hybrid", "vector")
+RETRIEVAL_METHODS: tuple[str, ...] = ("hybrid", "vector", "bm25")
 
 
 def _lookup(key: str) -> str | None:
