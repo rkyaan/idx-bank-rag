@@ -1,0 +1,36 @@
+{"id": "bbca-2023-profit", "question": "Berapa laba bersih BCA tahun 2023?", "banks": ["BBCA"], "doc_id": "BBCA_2023", "pages": [39], "must_contain": ["48,6", "48.658"], "topic": "profit"}
+{"id": "bbca-2023-car", "question": "Berapa rasio kecukupan modal (CAR) BCA tahun 2023?", "banks": ["BBCA"], "doc_id": "BBCA_2023", "pages": [9, 19], "must_contain": ["29,4"], "topic": "capital"}
+{"id": "bbca-2023-assets", "question": "Berapa total aset BCA pada akhir tahun 2023?", "banks": ["BBCA"], "doc_id": "BBCA_2023", "pages": [18], "must_contain": ["1.408,1", "1.408.107"], "topic": "assets"}
+{"id": "bbca-2024-profit", "question": "Berapa laba bersih BCA tahun 2024?", "banks": ["BBCA"], "doc_id": "BBCA_2024", "pages": [647, 706], "must_contain": ["54.836.305", "54.706.382"], "topic": "profit"}
+{"id": "bbca-2024-car", "question": "Berapa rasio kecukupan modal (CAR) BCA tahun 2024?", "banks": ["BBCA"], "doc_id": "BBCA_2024", "pages": [9], "must_contain": ["29,4"], "topic": "capital"}
+{"id": "bbca-2024-npl", "question": "Berapa rasio NPL bruto BCA tahun 2024?", "banks": ["BBCA"], "doc_id": "BBCA_2024", "pages": [701], "must_contain": ["1,78"], "topic": "asset-quality"}
+{"id": "bbri-2023-profit", "question": "Berapa laba bersih BRI tahun 2023?", "banks": ["BBRI"], "doc_id": "BBRI_2023", "pages": [289], "must_contain": ["60,43"], "topic": "profit"}
+{"id": "bbri-2023-assets", "question": "Berapa total aset BRI pada akhir tahun 2023?", "banks": ["BBRI"], "doc_id": "BBRI_2023", "pages": [11], "must_contain": ["1.965,01"], "topic": "assets"}
+{"id": "bbri-2023-bopo", "question": "Berapa rasio BOPO BRI tahun 2023?", "banks": ["BBRI"], "doc_id": "BBRI_2023", "pages": [33], "must_contain": ["64,35"], "topic": "efficiency"}
+{"id": "bbri-2024-profit", "question": "Berapa laba bersih BRI tahun 2024?", "banks": ["BBRI"], "doc_id": "BBRI_2024", "pages": [3], "must_contain": ["60,64"], "topic": "profit"}
+{"id": "bbri-2024-car", "question": "Berapa rasio CAR BRI tahun 2024?", "banks": ["BBRI"], "doc_id": "BBRI_2024", "pages": [21], "must_contain": ["26,63", "26.63"], "topic": "capital"}
+{"id": "bbri-2024-npl", "question": "Berapa rasio NPL BRI tahun 2024?", "banks": ["BBRI"], "doc_id": "BBRI_2024", "pages": [21], "must_contain": ["2,78"], "topic": "asset-quality"}
+{"id": "bmri-2023-assets", "question": "Berapa total aset Bank Mandiri tahun 2023?", "banks": ["BMRI"], "doc_id": "BMRI_2023", "pages": [9], "must_contain": ["2.174"], "topic": "assets"}
+{"id": "bmri-2023-car", "question": "Berapa total CAR Bank Mandiri tahun 2023?", "banks": ["BMRI"], "doc_id": "BMRI_2023", "pages": [9], "must_contain": ["21,99"], "topic": "capital"}
+{"id": "bmri-2023-dpk", "question": "Berapa total dana pihak ketiga Bank Mandiri tahun 2023?", "banks": ["BMRI"], "doc_id": "BMRI_2023", "pages": [9], "must_contain": ["1.577"], "topic": "funding"}
+{"id": "bmri-2024-profit", "question": "Berapa laba bersih Bank Mandiri tahun 2024?", "banks": ["BMRI"], "doc_id": "BMRI_2024", "pages": [9], "must_contain": ["55,8"], "topic": "profit"}
+{"id": "bmri-2024-npl-coverage", "question": "Berapa NPL coverage Bank Mandiri tahun 2024?", "banks": ["BMRI"], "doc_id": "BMRI_2024", "pages": [9], "must_contain": ["271"], "topic": "asset-quality"}
+{"id": "bmri-2024-bopo", "question": "Berapa rasio BOPO bank-only Bank Mandiri tahun 2024?", "banks": ["BMRI"], "doc_id": "BMRI_2024", "pages": [9], "must_contain": ["56,5"], "topic": "efficiency"}
+{"id": "bbni-2023-profit", "question": "Berapa laba bersih BNI tahun 2023?", "banks": ["BBNI"], "doc_id": "BBNI_2023", "pages": [12], "must_contain": ["20,9"], "topic": "profit"}
+{"id": "bbni-2023-deposits", "question": "Berapa jumlah simpanan nasabah BNI pada tahun 2023?", "banks": ["BBNI"], "doc_id": "BBNI_2023", "pages": [12], "must_contain": ["810,7"], "topic": "funding"}
+{"id": "bbni-2023-assets", "question": "Berapa jumlah aset BNI pada akhir tahun 2023?", "banks": ["BBNI"], "doc_id": "BBNI_2023", "pages": [18], "must_contain": ["1.086.664", "1.087"], "topic": "assets"}
+{"id": "bbni-2024-profit", "question": "Berapa laba bersih BNI pada tahun buku 2024?", "banks": ["BBNI"], "doc_id": "BBNI_2024", "pages": [362], "must_contain": ["21,5"], "topic": "profit"}
+{"id": "bbni-2024-assets", "question": "Berapa total aset BNI tahun 2024?", "banks": ["BBNI"], "doc_id": "BBNI_2024", "pages": [302], "must_contain": ["1.130"], "topic": "assets"}
+{"id": "bbni-2024-lar", "question": "Berapa total loan at risk (LaR) BNI pada Desember 2024?", "banks": ["BBNI"], "doc_id": "BBNI_2024", "pages": [488], "must_contain": ["78,6"], "topic": "asset-quality"}
+{"id": "bris-2023-profit", "question": "Berapa laba bersih Bank Syariah Indonesia tahun 2023?", "banks": ["BRIS"], "doc_id": "BRIS_2023", "pages": [9], "must_contain": ["5,70"], "topic": "profit"}
+{"id": "bris-2023-npf", "question": "Berapa NPF gross Bank Syariah Indonesia tahun 2023?", "banks": ["BRIS"], "doc_id": "BRIS_2023", "pages": [187, 338], "must_contain": ["2,08"], "topic": "asset-quality"}
+{"id": "bris-2023-car", "question": "Berapa rasio kecukupan modal Bank Syariah Indonesia tahun 2023?", "banks": ["BRIS"], "doc_id": "BRIS_2023", "pages": [187], "must_contain": ["21,04"], "topic": "capital"}
+{"id": "bris-2024-profit", "question": "Berapa laba bersih Bank Syariah Indonesia tahun 2024?", "banks": ["BRIS"], "doc_id": "BRIS_2024", "pages": [17], "must_contain": ["7,00"], "topic": "profit"}
+{"id": "bris-2024-assets", "question": "Berapa total aset Bank Syariah Indonesia tahun 2024?", "banks": ["BRIS"], "doc_id": "BRIS_2024", "pages": [39], "must_contain": ["408,61"], "topic": "assets"}
+{"id": "bris-2024-npf", "question": "Berapa NPF gross Bank Syariah Indonesia tahun 2024?", "banks": ["BRIS"], "doc_id": "BRIS_2024", "pages": [16, 23], "must_contain": ["1,90"], "topic": "asset-quality"}
+{"id": "oos-stock-price", "question": "Berapa harga saham BBCA besok?", "banks": ["BBCA"], "out_of_scope": true, "absent_terms": ["harga saham besok"]}
+{"id": "oos-presiden", "question": "Siapa presiden Brasil tahun 2027?", "banks": null, "out_of_scope": true, "absent_terms": ["presiden brasil"]}
+{"id": "oos-resep", "question": "Bagaimana cara membuat kue bolu?", "banks": null, "out_of_scope": true, "absent_terms": ["cara membuat kue"]}
+{"id": "oos-advice", "question": "Apakah saya sebaiknya membeli saham BBRI sekarang?", "banks": ["BBRI"], "out_of_scope": true}
+{"id": "oos-cuaca", "question": "Berapa suhu udara di Jakarta hari ini?", "banks": null, "out_of_scope": true, "absent_terms": ["suhu udara"]}
+{"id": "oos-penduduk", "question": "Berapa jumlah penduduk Jepang tahun 2026?", "banks": null, "out_of_scope": true, "absent_terms": ["jumlah penduduk jepang"]}

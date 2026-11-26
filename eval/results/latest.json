@@ -1,0 +1,475 @@
+{
+  "gold": "/home/breboi/idx-bank-rag/eval/gold_questions.jsonl",
+  "questions": 36,
+  "retrieval": {
+    "top_k": 6,
+    "questions": 30,
+    "methods": {
+      "hybrid": {
+        "hit_rate": 0.5667,
+        "recall": 0.5167,
+        "mrr": 0.3356,
+        "answerable_hit_rate": 0.9,
+        "answerable_mrr": 0.6522,
+        "missed": [
+          "bbca-2023-profit",
+          "bbca-2023-assets",
+          "bbri-2023-assets",
+          "bbri-2024-profit",
+          "bbri-2024-car",
+          "bbri-2024-npl",
+          "bmri-2023-dpk",
+          "bmri-2024-profit",
+          "bbni-2023-profit",
+          "bbni-2023-assets",
+          "bris-2023-npf",
+          "bris-2023-car",
+          "bris-2024-assets"
+        ]
+      },
+      "vector": {
+        "hit_rate": 0.3,
+        "recall": 0.2833,
+        "mrr": 0.2111,
+        "answerable_hit_rate": 0.7667,
+        "answerable_mrr": 0.6194,
+        "missed": [
+          "bbca-2023-profit",
+          "bbca-2023-car",
+          "bbca-2023-assets",
+          "bbca-2024-profit",
+          "bbri-2023-assets",
+          "bbri-2023-bopo",
+          "bbri-2024-profit",
+          "bbri-2024-npl",
+          "bmri-2023-assets",
+          "bmri-2023-car",
+          "bmri-2023-dpk",
+          "bmri-2024-profit",
+          "bmri-2024-npl-coverage",
+          "bbni-2023-profit",
+          "bbni-2023-deposits",
+          "bbni-2023-assets",
+          "bbni-2024-profit",
+          "bris-2023-npf",
+          "bris-2023-car",
+          "bris-2024-profit",
+          "bris-2024-assets"
+        ]
+      },
+      "bm25": {
+        "hit_rate": 0.4333,
+        "recall": 0.4167,
+        "mrr": 0.2972,
+        "answerable_hit_rate": 0.7333,
+        "answerable_mrr": 0.5306,
+        "missed": [
+          "bbca-2023-profit",
+          "bbca-2023-assets",
+          "bbri-2023-assets",
+          "bbri-2023-bopo",
+          "bbri-2024-profit",
+          "bbri-2024-car",
+          "bbri-2024-npl",
+          "bmri-2023-assets",
+          "bmri-2023-dpk",
+          "bmri-2024-profit",
+          "bbni-2023-profit",
+          "bbni-2023-assets",
+          "bbni-2024-profit",
+          "bris-2023-profit",
+          "bris-2023-npf",
+          "bris-2023-car",
+          "bris-2024-profit"
+        ]
+      }
+    }
+  },
+  "answers": {
+    "in_scope": {
+      "questions": 30,
+      "answered": 27,
+      "refused": 3,
+      "errors": 0,
+      "answer_rate": 0.9,
+      "citation_hit_rate": 0.4815,
+      "citation_answerable_rate": 0.9259,
+      "failures": [
+        "bbri-2023-assets",
+        "bmri-2024-profit",
+        "bris-2023-npf",
+        "bris-2023-car",
+        "bris-2024-profit"
+      ],
+      "refused_ids": [
+        "bbri-2023-assets",
+        "bris-2023-npf",
+        "bris-2023-car"
+      ]
+    },
+    "out_of_scope": {
+      "questions": 6,
+      "refused": 6,
+      "errors": 0,
+      "refusal_rate": 1.0,
+      "wrongly_answered": []
+    },
+    "details": [
+      {
+        "id": "bbca-2023-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2023",
+            272
+          ],
+          [
+            "BBCA_2023",
+            682
+          ]
+        ]
+      },
+      {
+        "id": "bbca-2023-car",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2023",
+            144
+          ]
+        ]
+      },
+      {
+        "id": "bbca-2023-assets",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2023",
+            260
+          ]
+        ]
+      },
+      {
+        "id": "bbca-2024-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2024",
+            39
+          ],
+          [
+            "BBCA_2024",
+            268
+          ],
+          [
+            "BBCA_2024",
+            647
+          ]
+        ]
+      },
+      {
+        "id": "bbca-2024-car",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2024",
+            9
+          ]
+        ]
+      },
+      {
+        "id": "bbca-2024-npl",
+        "refused": false,
+        "cited": [
+          [
+            "BBCA_2024",
+            9
+          ],
+          [
+            "BBCA_2024",
+            701
+          ]
+        ]
+      },
+      {
+        "id": "bbri-2023-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBRI_2023",
+            289
+          ]
+        ]
+      },
+      {
+        "id": "bbri-2023-assets",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "bbri-2023-bopo",
+        "refused": false,
+        "cited": [
+          [
+            "BBRI_2023",
+            296
+          ]
+        ]
+      },
+      {
+        "id": "bbri-2024-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBRI_2024",
+            295
+          ]
+        ]
+      },
+      {
+        "id": "bbri-2024-car",
+        "refused": false,
+        "cited": [
+          [
+            "BBRI_2024",
+            302
+          ]
+        ]
+      },
+      {
+        "id": "bbri-2024-npl",
+        "refused": false,
+        "cited": [
+          [
+            "BBRI_2024",
+            1224
+          ],
+          [
+            "BBRI_2024",
+            1225
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2023-assets",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2023",
+            9
+          ],
+          [
+            "BMRI_2023",
+            372
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2023-car",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2023",
+            9
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2023-dpk",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2023",
+            13
+          ],
+          [
+            "BMRI_2023",
+            269
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2024-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2024",
+            286
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2024-npl-coverage",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2024",
+            76
+          ],
+          [
+            "BMRI_2024",
+            295
+          ]
+        ]
+      },
+      {
+        "id": "bmri-2024-bopo",
+        "refused": false,
+        "cited": [
+          [
+            "BMRI_2024",
+            9
+          ],
+          [
+            "BMRI_2024",
+            438
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2023-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2023",
+            335
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2023-deposits",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2023",
+            12
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2023-assets",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2023",
+            282
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2024-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2024",
+            362
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2024-assets",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2024",
+            302
+          ]
+        ]
+      },
+      {
+        "id": "bbni-2024-lar",
+        "refused": false,
+        "cited": [
+          [
+            "BBNI_2024",
+            488
+          ]
+        ]
+      },
+      {
+        "id": "bris-2023-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BRIS_2023",
+            9
+          ]
+        ]
+      },
+      {
+        "id": "bris-2023-npf",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "bris-2023-car",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "bris-2024-profit",
+        "refused": false,
+        "cited": [
+          [
+            "BRIS_2024",
+            189
+          ]
+        ]
+      },
+      {
+        "id": "bris-2024-assets",
+        "refused": false,
+        "cited": [
+          [
+            "BRIS_2024",
+            184
+          ]
+        ]
+      },
+      {
+        "id": "bris-2024-npf",
+        "refused": false,
+        "cited": [
+          [
+            "BRIS_2024",
+            16
+          ],
+          [
+            "BRIS_2024",
+            198
+          ]
+        ]
+      },
+      {
+        "id": "oos-stock-price",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "oos-presiden",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "oos-resep",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "oos-advice",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "oos-cuaca",
+        "refused": true,
+        "cited": []
+      },
+      {
+        "id": "oos-penduduk",
+        "refused": true,
+        "cited": []
+      }
+    ]
+  }
+}
