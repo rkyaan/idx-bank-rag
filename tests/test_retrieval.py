@@ -7,7 +7,14 @@ import numpy as np
 import pytest
 
 from rag.config import Settings
-from rag.retriever import Retriever, expand_query, reciprocal_rank_fusion, tokenize
+from rag.retriever import (
+    Retriever,
+    expand_query,
+    mentioned_years,
+    reciprocal_rank_fusion,
+    strip_bank_mentions,
+    tokenize,
+)
 from rag.schemas import Chunk
 
 
@@ -37,12 +44,12 @@ class RecordingEmbedder:
         return np.asarray([1.0, 0.0], dtype=np.float32)
 
 
-def make_chunk(chunk_id: str, bank: str, text: str, page: int = 1) -> Chunk:
+def make_chunk(chunk_id: str, bank: str, text: str, page: int = 1, year: int = 2024) -> Chunk:
     return Chunk(
         chunk_id=chunk_id,
-        doc_id=f"{bank}_2024",
+        doc_id=f"{bank}_{year}",
         bank=bank,
-        year=2024,
+        year=year,
         page=page,
         text=text,
         n_tokens=len(text.split()),
@@ -193,7 +200,90 @@ def test_expansion_keeps_duplicate_terms_out_of_the_query() -> None:
     assert expand_query("risiko", table) == "risiko risiko kredit"
 
 
-def test_search_embeds_the_expanded_query() -> None:
+def test_strip_bank_mentions_removes_the_selected_bank_name() -> None:
+    assert strip_bank_mentions("Berapa laba bersih BCA tahun 2024?", ["BBCA"]) == (
+        "Berapa laba bersih tahun 2024?"
+    )
+    assert strip_bank_mentions("laba bersih Bank Mandiri", ["BMRI"]) == "laba bersih"
+
+
+def test_strip_bank_mentions_keeps_the_name_of_an_unselected_bank() -> None:
+    assert strip_bank_mentions("laba bersih BCA dan BRI", ["BBCA"]) == "laba bersih dan BRI"
+
+
+def test_strip_bank_mentions_ignores_matches_inside_a_longer_word() -> None:
+    assert strip_bank_mentions("kegiatan briskuit", ["BRIS"]) == "kegiatan briskuit"
+
+
+def test_strip_bank_mentions_falls_back_to_the_original_query() -> None:
+    assert strip_bank_mentions("BCA", ["BBCA"]) == "BCA"
+
+
+def test_search_drops_the_bank_name_when_the_filter_narrows_to_it() -> None:
+    chunks = [
+        make_chunk("a", "BBCA", "laba bersih bca"),
+        make_chunk("b", "BBRI", "laba bersih bri"),
+    ]
+    embedder = RecordingEmbedder()
+    retriever = make_retriever(chunks, [[1.0, 0.0]] * 2, embedder)
+    retriever.search("Berapa laba bersih BCA tahun 2024?", ["BBCA"], top_k=2)
+
+    assert embedder.texts == ["Berapa laba bersih tahun 2024?"]
+
+
+def test_search_keeps_the_bank_name_when_every_bank_is_searched() -> None:
+    chunks = [
+        make_chunk("a", "BBCA", "laba bersih bca"),
+        make_chunk("b", "BBRI", "laba bersih bri"),
+    ]
+    embedder = RecordingEmbedder()
+    retriever = make_retriever(chunks, [[1.0, 0.0]] * 2, embedder)
+    retriever.search("Bagaimana laba bersih BCA?", top_k=2)
+
+    assert embedder.texts == ["Bagaimana laba bersih BCA?"]
+
+
+def test_mentioned_years_only_keeps_years_the_index_holds() -> None:
+    assert mentioned_years("Berapa laba tahun 2023?", {2023, 2024}) == {2023}
+    assert mentioned_years("laba 2023 dan 2024", {2023, 2024}) == {2023, 2024}
+    assert mentioned_years("laba tahun 2025", {2023, 2024}) == set()
+    assert mentioned_years("bagaimana laba?", {2023, 2024}) == set()
+
+
+def test_search_prefers_the_year_named_in_the_question() -> None:
+    chunks = [
+        make_chunk("old", "BBCA", "laba bersih 2023", page=1, year=2023),
+        make_chunk("new", "BBCA", "laba bersih 2024", page=1, year=2024),
+    ]
+    retriever = make_retriever(chunks, [[1.0, 0.0], [1.0, 0.0]], FixedEmbedder([1.0, 0.0]))
+
+    results = retriever.search("Berapa laba tahun 2023?", ["BBCA"], top_k=2)
+
+    assert {result.chunk.year for result in results} == {2023}
+
+
+def test_search_keeps_every_year_when_the_question_names_none() -> None:
+    chunks = [
+        make_chunk("old", "BBCA", "laba bersih 2023", page=1, year=2023),
+        make_chunk("new", "BBCA", "laba bersih 2024", page=2, year=2024),
+    ]
+    retriever = make_retriever(chunks, [[1.0, 0.0], [1.0, 0.0]], FixedEmbedder([1.0, 0.0]))
+
+    results = retriever.search("Bagaimana laba bersih?", ["BBCA"], top_k=2)
+
+    assert {result.chunk.year for result in results} == {2023, 2024}
+
+
+def test_search_falls_back_when_the_named_year_has_no_passages() -> None:
+    chunks = [make_chunk("only", "BBCA", "laba bersih", page=1, year=2024)]
+    retriever = make_retriever(chunks, [[1.0, 0.0]], FixedEmbedder([1.0, 0.0]))
+
+    results = retriever.search("Berapa laba tahun 2025?", ["BBCA"], top_k=2)
+
+    assert [result.chunk.chunk_id for result in results] == ["only"]
+
+
+def test_dense_search_uses_the_expanded_query() -> None:
     chunks = [make_chunk(f"c{i}", "BBCA", f"kalimat {i} biasa") for i in range(4)]
     embedder = RecordingEmbedder()
     retriever = make_retriever(chunks, [[1.0, 0.0]] * 4, embedder)

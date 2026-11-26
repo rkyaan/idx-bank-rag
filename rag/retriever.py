@@ -11,17 +11,19 @@ import argparse
 import json
 import re
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 import faiss
 import numpy as np
 from rank_bm25 import BM25Okapi
 
-from rag.config import BANKS, QUERY_EXPANSIONS, Settings
+from rag.config import BANK_ALIASES, BANKS, QUERY_EXPANSIONS, Settings
 from rag.embeddings import Embedder
 from rag.schemas import Chunk, RetrievedChunk
 
 WORD_PATTERN = re.compile(r"\w+")
+YEAR_PATTERN = re.compile(r"\b(20\d{2})\b")
 
 
 def tokenize(text: str) -> list[str]:
@@ -39,6 +41,25 @@ def expand_query(query: str, expansions: dict[str, str] | None = None) -> str:
     if not extras:
         return query
     return " ".join([query, *extras])
+
+
+def strip_bank_mentions(query: str, banks: Sequence[str]) -> str:
+    """Drop the names of the already-selected banks, which add nothing to a filtered search."""
+    cleaned = query
+    for bank in banks:
+        for alias in sorted(BANK_ALIASES.get(bank, ()), key=len, reverse=True):
+            cleaned = re.sub(rf"\b{re.escape(alias)}\b", " ", cleaned, flags=re.IGNORECASE)
+    cleaned = " ".join(cleaned.split())
+    return cleaned or query
+
+
+def mentioned_years(query: str, available: set[int]) -> set[int]:
+    """Years the question names that the selected banks actually publish.
+
+    Asking about 2023 while the index also holds 2024 invites an answer with the wrong
+    year's figures, so a named year narrows the candidate pool.
+    """
+    return {int(year) for year in YEAR_PATTERN.findall(query) if int(year) in available}
 
 
 def reciprocal_rank_fusion(rankings: list[list[str]], k: int = 60) -> list[tuple[str, float]]:
@@ -67,8 +88,10 @@ class Retriever:
 
         self._by_id = {chunk.chunk_id: chunk for chunk in chunks}
         self._positions: dict[str, list[int]] = {}
+        self._years: dict[str, set[int]] = {}
         for position, chunk in enumerate(chunks):
             self._positions.setdefault(chunk.bank, []).append(position)
+            self._years.setdefault(chunk.bank, set()).add(chunk.year)
 
         self._bm25: dict[str, BM25Okapi] = {}
         for bank, positions in self._positions.items():
@@ -124,14 +147,18 @@ class Retriever:
         mode = method or self.settings.retrieval_method
         candidates = max(limit * 5, 20)
 
-        expanded = expand_query(query)
+        # A bank name is noise only when the filter has already narrowed the search to it.
+        redundant = selected if len(selected) < len(self.available_banks) else []
+        expanded = expand_query(strip_bank_mentions(query, redundant))
+        years = mentioned_years(query, set().union(*(self._years[bank] for bank in selected)))
         dense = self._dense(expanded, selected, candidates) if mode in {"hybrid", "vector"} else []
+        dense = self._keep_years(dense, years)
         if mode == "vector":
             picked = dense[:limit]
         elif mode == "bm25":
-            picked = self._sparse(expanded, selected, candidates)[:limit]
+            picked = self._keep_years(self._sparse(expanded, selected, candidates), years)[:limit]
         else:
-            sparse = self._sparse(expanded, selected, candidates)
+            sparse = self._keep_years(self._sparse(expanded, selected, candidates), years)
             if not dense:
                 picked = sparse[:limit]
             else:
@@ -154,6 +181,15 @@ class Retriever:
         if unknown:
             raise ValueError(f"Unknown bank(s): {', '.join(unknown)}")
         return [bank for bank in banks if bank in self.indexes]
+
+    def _keep_years(
+        self, hits: list[tuple[str, float]], years: set[int]
+    ) -> list[tuple[str, float]]:
+        """Prefer hits from a named year, but never return nothing because of the filter."""
+        if not years:
+            return hits
+        kept = [hit for hit in hits if self._by_id[hit[0]].year in years]
+        return kept or hits
 
     def _dense(self, query: str, banks: list[str], k: int) -> list[tuple[str, float]]:
         vector = self.embedder.embed_query(query).reshape(1, -1).astype(np.float32)

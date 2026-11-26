@@ -28,6 +28,17 @@ BANK_NAMES: dict[str, str] = {
     "BRIS": "PT Bank Syariah Indonesia Tbk",
 }
 
+# How people actually name the banks in a question. When a bank is already fixed by
+# the filter, repeating its name in the query only pulls lexical matches away from
+# the passage that holds the answer, so these are removed before searching.
+BANK_ALIASES: dict[str, tuple[str, ...]] = {
+    "BBCA": ("bca", "bank central asia", "bank bca"),
+    "BBRI": ("bri", "bank rakyat indonesia", "bank bri"),
+    "BMRI": ("mandiri", "bank mandiri"),
+    "BBNI": ("bni", "bank negara indonesia", "bank bni"),
+    "BRIS": ("bsi", "bris", "bank syariah indonesia", "bank bsi"),
+}
+
 EMBED_MODEL = "intfloat/multilingual-e5-small"
 EMBED_DIM = 384
 EMBED_MAX_TOKENS = 512
