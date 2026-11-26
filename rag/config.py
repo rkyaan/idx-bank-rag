@@ -34,6 +34,17 @@ EMBED_MAX_TOKENS = 512
 
 RETRIEVAL_METHODS: tuple[str, ...] = ("hybrid", "vector", "bm25")
 
+# Vague questions undersell themselves to the embedding model: "risiko utama" is a
+# short, generic query, while the answer lives in a section full of specific terms.
+# Appending that vocabulary widens both the dense and the keyword search. Keys are
+# matched as word prefixes against the case-folded question.
+QUERY_EXPANSIONS: dict[str, str] = {
+    "risiko": (
+        "manajemen risiko risiko kredit risiko pasar risiko likuiditas risiko operasional "
+        "profil risiko penilaian risiko identifikasi risiko mitigasi risiko"
+    ),
+}
+
 
 def _lookup(key: str) -> str | None:
     """Return a config value from the environment, then Streamlit secrets."""
@@ -91,6 +102,13 @@ class Settings:
     session_cooldown_seconds: float = 3.0
     daily_request_cap: int = 200
     cache_size: int = 128
+    llm_temperature: float = 0.2
+    llm_max_output_tokens: int = 700
+    llm_timeout_seconds: float = 45.0
+    llm_retry_attempts: int = 1
+    llm_retry_backoff_seconds: float = 1.0
+    max_context_chars: int = 14000
+    min_relevance_score: float = 0.0
 
     def __post_init__(self) -> None:
         if self.chunk_min_tokens < 1:
@@ -112,6 +130,20 @@ class Settings:
             raise ValueError("DAILY_REQUEST_CAP must be >= 0")
         if self.min_indexable_tokens < 0:
             raise ValueError("MIN_INDEXABLE_TOKENS must be >= 0")
+        if not 0.0 <= self.llm_temperature <= 2.0:
+            raise ValueError("LLM_TEMPERATURE must be in [0, 2]")
+        if self.llm_max_output_tokens < 1:
+            raise ValueError("LLM_MAX_OUTPUT_TOKENS must be positive")
+        if self.llm_timeout_seconds <= 0:
+            raise ValueError("LLM_TIMEOUT_SECONDS must be positive")
+        if self.llm_retry_attempts < 0:
+            raise ValueError("LLM_RETRY_ATTEMPTS must be >= 0")
+        if self.llm_retry_backoff_seconds < 0:
+            raise ValueError("LLM_RETRY_BACKOFF_SECONDS must be >= 0")
+        if self.max_context_chars < 1:
+            raise ValueError("MAX_CONTEXT_CHARS must be positive")
+        if self.min_relevance_score < 0:
+            raise ValueError("MIN_RELEVANCE_SCORE must be >= 0")
 
     @property
     def llm_configured(self) -> bool:
@@ -134,4 +166,11 @@ class Settings:
             session_cooldown_seconds=_as_float("SESSION_COOLDOWN_SECONDS", 3.0),
             daily_request_cap=_as_int("DAILY_REQUEST_CAP", 200),
             cache_size=_as_int("CACHE_SIZE", 128),
+            llm_temperature=_as_float("LLM_TEMPERATURE", 0.2),
+            llm_max_output_tokens=_as_int("LLM_MAX_OUTPUT_TOKENS", 700),
+            llm_timeout_seconds=_as_float("LLM_TIMEOUT_SECONDS", 45.0),
+            llm_retry_attempts=_as_int("LLM_RETRY_ATTEMPTS", 1),
+            llm_retry_backoff_seconds=_as_float("LLM_RETRY_BACKOFF_SECONDS", 1.0),
+            max_context_chars=_as_int("MAX_CONTEXT_CHARS", 14000),
+            min_relevance_score=_as_float("MIN_RELEVANCE_SCORE", 0.0),
         )

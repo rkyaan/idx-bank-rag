@@ -17,7 +17,7 @@ import faiss
 import numpy as np
 from rank_bm25 import BM25Okapi
 
-from rag.config import BANKS, Settings
+from rag.config import BANKS, QUERY_EXPANSIONS, Settings
 from rag.embeddings import Embedder
 from rag.schemas import Chunk, RetrievedChunk
 
@@ -27,6 +27,18 @@ WORD_PATTERN = re.compile(r"\w+")
 def tokenize(text: str) -> list[str]:
     """Lowercase word tokens, good enough for BM25 on Indonesian text."""
     return WORD_PATTERN.findall(text.casefold())
+
+
+def expand_query(query: str, expansions: dict[str, str] | None = None) -> str:
+    """Append domain vocabulary for vague terms, so dense search finds the right section."""
+    table = QUERY_EXPANSIONS if expansions is None else expansions
+    folded = query.casefold()
+    extras = [
+        terms for trigger, terms in table.items() if re.search(rf"\b{re.escape(trigger)}", folded)
+    ]
+    if not extras:
+        return query
+    return " ".join([query, *extras])
 
 
 def reciprocal_rank_fusion(rankings: list[list[str]], k: int = 60) -> list[tuple[str, float]]:
@@ -112,13 +124,14 @@ class Retriever:
         mode = method or self.settings.retrieval_method
         candidates = max(limit * 5, 20)
 
-        dense = self._dense(query, selected, candidates) if mode in {"hybrid", "vector"} else []
+        expanded = expand_query(query)
+        dense = self._dense(expanded, selected, candidates) if mode in {"hybrid", "vector"} else []
         if mode == "vector":
             picked = dense[:limit]
         elif mode == "bm25":
-            picked = self._sparse(query, selected, candidates)[:limit]
+            picked = self._sparse(expanded, selected, candidates)[:limit]
         else:
-            sparse = self._sparse(query, selected, candidates)
+            sparse = self._sparse(expanded, selected, candidates)
             if not dense:
                 picked = sparse[:limit]
             else:

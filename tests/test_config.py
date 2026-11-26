@@ -20,6 +20,13 @@ ENV_KEYS = (
     "SESSION_COOLDOWN_SECONDS",
     "DAILY_REQUEST_CAP",
     "CACHE_SIZE",
+    "LLM_TEMPERATURE",
+    "LLM_MAX_OUTPUT_TOKENS",
+    "LLM_TIMEOUT_SECONDS",
+    "LLM_RETRY_ATTEMPTS",
+    "LLM_RETRY_BACKOFF_SECONDS",
+    "MAX_CONTEXT_CHARS",
+    "MIN_RELEVANCE_SCORE",
 )
 
 
@@ -42,6 +49,14 @@ def test_defaults_match_the_approved_plan() -> None:
     assert settings.top_k == 6
     assert settings.retrieval_method == "hybrid"
     assert settings.session_cooldown_seconds == pytest.approx(3.0)
+    assert settings.llm_temperature == pytest.approx(0.2)
+    assert settings.llm_max_output_tokens == 700
+    assert settings.llm_timeout_seconds == pytest.approx(45.0)
+    assert settings.llm_retry_attempts == 1
+    assert settings.llm_retry_backoff_seconds == pytest.approx(1.0)
+    assert settings.max_context_chars == 14000
+    assert settings.min_relevance_score == pytest.approx(0.0)
+    assert settings.daily_request_cap == 200
     assert settings.llm_model is None
     assert settings.llm_configured is False
 
@@ -97,3 +112,38 @@ def test_unknown_retrieval_method_is_rejected() -> None:
 def test_negative_daily_cap_is_rejected() -> None:
     with pytest.raises(ValueError, match="DAILY_REQUEST_CAP"):
         Settings(daily_request_cap=-1)
+
+
+def test_temperature_outside_the_supported_range_is_rejected() -> None:
+    with pytest.raises(ValueError, match="LLM_TEMPERATURE"):
+        Settings(llm_temperature=2.5)
+
+
+def test_non_positive_output_budget_is_rejected() -> None:
+    with pytest.raises(ValueError, match="LLM_MAX_OUTPUT_TOKENS"):
+        Settings(llm_max_output_tokens=0)
+
+
+def test_non_positive_timeout_is_rejected() -> None:
+    with pytest.raises(ValueError, match="LLM_TIMEOUT_SECONDS"):
+        Settings(llm_timeout_seconds=0)
+
+
+def test_non_positive_context_budget_is_rejected() -> None:
+    with pytest.raises(ValueError, match="MAX_CONTEXT_CHARS"):
+        Settings(max_context_chars=0)
+
+
+def test_negative_relevance_floor_is_rejected() -> None:
+    with pytest.raises(ValueError, match="MIN_RELEVANCE_SCORE"):
+        Settings(min_relevance_score=-0.1)
+
+
+def test_negative_retry_attempts_are_rejected() -> None:
+    with pytest.raises(ValueError, match="LLM_RETRY_ATTEMPTS"):
+        Settings(llm_retry_attempts=-1)
+
+
+def test_negative_retry_backoff_is_rejected() -> None:
+    with pytest.raises(ValueError, match="LLM_RETRY_BACKOFF_SECONDS"):
+        Settings(llm_retry_backoff_seconds=-1.0)

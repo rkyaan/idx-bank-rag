@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from rag.config import Settings
-from rag.retriever import Retriever, reciprocal_rank_fusion, tokenize
+from rag.retriever import Retriever, expand_query, reciprocal_rank_fusion, tokenize
 from rag.schemas import Chunk
 
 
@@ -24,6 +24,17 @@ class FixedEmbedder:
 class ExplodingEmbedder:
     def embed_query(self, text: str) -> np.ndarray:
         raise AssertionError("BM25-only search must not call the embedding model")
+
+
+class RecordingEmbedder:
+    """Keeps the text it was asked to embed, so tests can inspect the query."""
+
+    def __init__(self) -> None:
+        self.texts: list[str] = []
+
+    def embed_query(self, text: str) -> np.ndarray:
+        self.texts.append(text)
+        return np.asarray([1.0, 0.0], dtype=np.float32)
 
 
 def make_chunk(chunk_id: str, bank: str, text: str, page: int = 1) -> Chunk:
@@ -157,3 +168,37 @@ def test_available_banks_lists_only_loaded_indexes() -> None:
     chunks = [make_chunk("a", "BBCA", "teks"), make_chunk("b", "BRIS", "teks")]
     retriever = make_retriever(chunks, [[1.0, 0.0], [1.0, 0.0]], FixedEmbedder([1.0, 0.0]))
     assert retriever.available_banks == ["BBCA", "BRIS"]
+
+
+def test_expansion_appends_domain_terms_for_a_vague_question() -> None:
+    expanded = expand_query("Apa risiko utama yang dilaporkan?")
+
+    assert expanded.startswith("Apa risiko utama yang dilaporkan?")
+    assert "risiko kredit" in expanded
+    assert "profil risiko" in expanded
+
+
+def test_expansion_leaves_a_specific_question_untouched() -> None:
+    assert expand_query("Berapa laba bersih tahun 2024?") == "Berapa laba bersih tahun 2024?"
+
+
+def test_expansion_ignores_terms_inside_a_longer_word() -> None:
+    assert (
+        expand_query("Bagaimana bank mengelola berisiko?") == "Bagaimana bank mengelola berisiko?"
+    )
+
+
+def test_expansion_keeps_duplicate_terms_out_of_the_query() -> None:
+    table = {"risiko": "risiko kredit"}
+    assert expand_query("risiko", table) == "risiko risiko kredit"
+
+
+def test_search_embeds_the_expanded_query() -> None:
+    chunks = [make_chunk(f"c{i}", "BBCA", f"kalimat {i} biasa") for i in range(4)]
+    embedder = RecordingEmbedder()
+    retriever = make_retriever(chunks, [[1.0, 0.0]] * 4, embedder)
+    retriever.search("Apa risiko utama?", top_k=2)
+
+    assert len(embedder.texts) == 1
+    assert embedder.texts[0].startswith("Apa risiko utama?")
+    assert "profil risiko" in embedder.texts[0]
