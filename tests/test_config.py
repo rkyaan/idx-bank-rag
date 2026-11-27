@@ -49,7 +49,7 @@ def test_defaults_match_the_approved_plan() -> None:
     assert settings.top_k == 6
     assert settings.retrieval_method == "hybrid"
     assert settings.session_cooldown_seconds == pytest.approx(3.0)
-    assert settings.llm_temperature == pytest.approx(0.2)
+    assert settings.llm_temperature == pytest.approx(0.0)
     assert settings.llm_max_output_tokens == 700
     assert settings.llm_timeout_seconds == pytest.approx(45.0)
     assert settings.llm_retry_attempts == 1

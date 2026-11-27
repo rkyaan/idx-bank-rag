@@ -113,7 +113,7 @@ class Settings:
     session_cooldown_seconds: float = 3.0
     daily_request_cap: int = 200
     cache_size: int = 128
-    llm_temperature: float = 0.2
+    llm_temperature: float = 0.0
     llm_max_output_tokens: int = 700
     llm_timeout_seconds: float = 45.0
     llm_retry_attempts: int = 1
@@ -177,7 +177,7 @@ class Settings:
             session_cooldown_seconds=_as_float("SESSION_COOLDOWN_SECONDS", 3.0),
             daily_request_cap=_as_int("DAILY_REQUEST_CAP", 200),
             cache_size=_as_int("CACHE_SIZE", 128),
-            llm_temperature=_as_float("LLM_TEMPERATURE", 0.2),
+            llm_temperature=_as_float("LLM_TEMPERATURE", 0.0),
             llm_max_output_tokens=_as_int("LLM_MAX_OUTPUT_TOKENS", 700),
             llm_timeout_seconds=_as_float("LLM_TIMEOUT_SECONDS", 45.0),
             llm_retry_attempts=_as_int("LLM_RETRY_ATTEMPTS", 1),
