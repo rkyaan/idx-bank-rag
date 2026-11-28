@@ -139,6 +139,13 @@ pytest
 The UI tests drive the real Streamlit app through `streamlit.testing`, with the model
 stubbed, so they run offline and do not spend API quota.
 
+## Documentation
+
+- [`docs/architecture.md`](docs/architecture.md) — data flow, component design, and the
+  reasoning behind each major decision.
+- [`docs/evaluation.md`](docs/evaluation.md) — the gold question set, metric
+  definitions, and measured results.
+
 ## Project layout
 
 ```
@@ -153,4 +160,5 @@ rag/pipeline.py      prompt assembly, citation validation, refusals
 rag/index_bundle.py  release-asset packing and fetching
 rag/evaluate.py      retrieval and answer scoring
 eval/                gold questions and measured results
+docs/                architecture and evaluation notes
 ```
