@@ -6,6 +6,8 @@ A retrieval-augmented chatbot that answers Indonesian questions about the 2023 a
 Every answer cites the report and PDF page it came from, and the app refuses to
 answer when the indexed reports do not contain the evidence.
 
+**Live demo:** <https://idx-bank-rag-xfgell9rh2rypslppule7h.streamlit.app/>
+
 Example questions:
 
 - Berapa laba bersih BBCA tahun 2024?
@@ -46,15 +48,17 @@ question ──► query expansion ──► BM25 + vector search ──► RRF 
 | BBNI — Bank Negara Indonesia | 2023, 2024 | 6,495 |
 | BRIS — Bank Syariah Indonesia | 2023, 2024 | 2,729 |
 
-10 reports, 11,440 pages, 23,854 chunks. The PDFs are not redistributed in this
-repository; `data/raw/README.md` lists the sources.
+10 reports, 11,440 indexed pages, 23,854 chunks. Pages without extractable text are
+skipped during indexing, so the page counts here are slightly lower than the PDF page
+counts. The PDFs are not redistributed in this repository; `data/raw/README.md` lists
+the sources.
 
 ## Results
 
 Measured on a hand-judged set of 36 questions (30 answerable, 6 out of scope) with
 top-6 retrieval:
 
-| Retrieval | Any-page hit | MRR |
+| Retrieval | Any-page hit | Any-page MRR |
 |---|---|---|
 | Hybrid (shipped) | 0.933 | 0.712 |
 | BM25 only | 0.833 | 0.608 |
@@ -64,8 +68,9 @@ top-6 retrieval:
 - 25 of those 27 cited a page that really contains the figure (0.926).
 - 6 of 6 out-of-scope questions refused (1.000).
 
-The remaining failures are retrieval misses on questions whose wording does not
-overlap the passage, not fabricated answers. Reproduce with:
+Three answerable questions are refused because the passage holding the figure is not
+in the top six, and two answers cite a page that does not hold the figure. No answer
+invented a number. Reproduce with:
 
 ```bash
 python -m rag.evaluate --top-k 6 --pace-seconds 5
@@ -82,6 +87,11 @@ python -m rag.evaluate --top-k 6 --pace-seconds 5
   questions, but a busy demo can still hit the daily cap.
 - Indonesian is the only supported language, because that is the language of the
   reports and of the interface.
+- Each question is answered on its own. The chat keeps the history on screen, but a
+  follow-up such as "kalau 2023?" is not linked to the question before it.
+- With several banks selected, a question that names no bank is answered from the six
+  best passages, which may cover only some of the selected banks. Pick a bank in the
+  sidebar for a focused answer.
 
 ## Local setup
 
@@ -122,11 +132,13 @@ That takes roughly 30 minutes on a laptop CPU.
 
 The app runs on Streamlit Community Cloud with no paid services.
 
-1. Create the app from this repository with `app.py` as the entry point. Python 3.11
-   is pinned in `.python-version`.
+1. Create the app from this repository with `app.py` as the entry point, and select
+   Python 3.11 under Advanced settings. `.python-version` records the same version for
+   local runs.
 2. Add `LLM_MODEL` and `LLM_API_KEY` in the app's secrets editor; the format is shown
    in `.streamlit/secrets.toml.example`.
-3. Deploy. The first question downloads the index bundle, which takes a few seconds.
+3. Deploy. The first question downloads the index bundle and loads the embedding model,
+   which takes under a minute; later answers take a few seconds.
 
 ## Checks
 

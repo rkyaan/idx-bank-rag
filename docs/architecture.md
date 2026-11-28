@@ -113,7 +113,7 @@ in both places.
 | Decision | Alternative | Why |
 |---|---|---|
 | Page-bounded chunks | Fixed-size sliding window | Citations stay truthful; a page never cites text from its neighbour |
-| e5-small via ONNX | Larger model via PyTorch | CPU-only hosting, no GPU, no 2 GB PyTorch install |
+| e5-small via ONNX | Larger model via PyTorch | CPU-only hosting, no GPU, no heavy PyTorch install |
 | One FAISS index per bank | Single index with metadata filter | Filtered search reads less and stays exact |
 | Reciprocal rank fusion | Weighted score blend | No calibration between cosine and BM25 scores |
 | Prompt and citation check for refusal | Score threshold | Fused scores overlap between answerable and unanswerable questions |

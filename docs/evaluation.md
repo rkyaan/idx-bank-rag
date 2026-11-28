@@ -29,8 +29,7 @@ scope.
 | `topic` | Profit, capital, assets, NPL, deposits, and similar |
 
 The set covers all five banks and both years, and mixes direct questions with
-paraphrased ones. It includes the questions that the first version of the pipeline
-answered from the wrong year, so a regression there fails the run.
+paraphrased ones.
 
 ## Metrics
 
@@ -111,6 +110,6 @@ that reflects whether a reader can verify the answer.
 
 ## Cost control
 
-- One run costs 30 model requests, about two minutes at 5 seconds per question.
+- One run costs 30 model requests, about three minutes at 5 seconds per question.
 - Retrieval-only scoring is free and runs on every change.
 - Stored answers can be rescored offline when the gold set gains spellings.

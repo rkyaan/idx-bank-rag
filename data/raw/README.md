@@ -1,8 +1,8 @@
 # Source PDFs
 
 The annual reports are **not committed**. They are public documents, but they are
-large and their redistribution terms are unclear. Only the derived index is
-committed.
+large and their redistribution terms are unclear. Only the derived index is published,
+as a release asset.
 
 Download the Indonesian version of each report into this folder with the exact
 names below, then run `python -m rag.ingest`.
@@ -19,6 +19,9 @@ names below, then run `python -m rag.ingest`.
 | `BBNI_2024.pdf` | PT Bank Negara Indonesia (Persero) Tbk | 2024 | 1540 | `e860f463fe63998a2ed3d86b536b44bd4e445be7c6632c923c88f1104d5c9cc1` |
 | `BRIS_2023.pdf` | PT Bank Syariah Indonesia Tbk | 2023 | 718 | `01e73ed711dba28444bc136ca2747dd29e78fc073d34b02798e8c99dffa34d41` |
 | `BRIS_2024.pdf` | PT Bank Syariah Indonesia Tbk | 2024 | 684 | `4b70ee73c167b4b3acebae10e81ffe98d3fe37cb7189d30babae09693515afcb` |
+
+Pages is the PDF page count. Pages without extractable text are skipped during
+indexing, so the index manifest reports slightly fewer pages per report.
 
 ## Official sources
 
