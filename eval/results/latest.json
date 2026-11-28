@@ -1,5 +1,5 @@
 {
-  "gold": "/home/breboi/idx-bank-rag/eval/gold_questions.jsonl",
+  "gold": "eval/gold_questions.jsonl",
   "questions": 36,
   "retrieval": {
     "top_k": 6,

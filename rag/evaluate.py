@@ -423,6 +423,14 @@ def write_report(path: Path, payload: dict) -> None:
     print(f"\nwrote {path}")
 
 
+def display_path(path: Path) -> str:
+    """A path relative to the project root, so reports never embed a local home directory."""
+    try:
+        return path.resolve().relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return path.name
+
+
 def main(argv: list[str] | None = None) -> int:
     settings = Settings.from_env()
     parser = argparse.ArgumentParser(
@@ -481,7 +489,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{exc} (strict scores only)", file=sys.stderr)
 
     payload: dict = {
-        "gold": str(args.gold),
+        "gold": display_path(args.gold),
         "questions": len(gold),
         "retrieval": evaluate_retrieval(retriever, gold, args.methods, args.top_k, answerable),
     }

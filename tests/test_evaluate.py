@@ -11,6 +11,7 @@ from rag.config import PROJECT_ROOT, Settings
 from rag.evaluate import (
     GoldQuestion,
     answerable_pages,
+    display_path,
     evaluate_answers,
     evaluate_retrieval,
     hit_at_k,
@@ -508,3 +509,18 @@ def test_report_is_written_as_readable_json(tmp_path: Path) -> None:
     write_report(path, {"questions": 3})
 
     assert json.loads(path.read_text(encoding="utf-8")) == {"questions": 3}
+
+
+def test_report_paths_are_relative_to_the_project() -> None:
+    assert display_path(GOLD_PATH) == "eval/gold_questions.jsonl"
+    assert display_path(Path("/tmp/elsewhere/questions.jsonl")) == "questions.jsonl"
+
+
+def test_the_committed_report_contains_no_local_paths() -> None:
+    report = PROJECT_ROOT / "eval" / "results" / "latest.json"
+    if not report.exists():
+        pytest.skip("no measured report has been committed")
+
+    text = report.read_text(encoding="utf-8")
+    assert "/home/" not in text
+    assert "C:\\Users" not in text
