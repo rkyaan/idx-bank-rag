@@ -12,6 +12,7 @@ import streamlit as st
 
 from rag.config import BANKS, Settings
 from rag.generator import LLMUnavailable
+from rag.index_bundle import IndexUnavailable, ensure_index
 from rag.pipeline import answer_question, get_answerer
 
 
@@ -56,6 +57,11 @@ def load_answerer():
     settings = Settings.from_env()
     if not settings.llm_configured:
         raise SetupError("LLM_MODEL and LLM_API_KEY are not set")
+    ensure_index(
+        settings.index_dir,
+        url=settings.index_bundle_url,
+        sha256=settings.index_bundle_sha256,
+    )
     return get_answerer(settings)
 
 
@@ -80,7 +86,7 @@ def answer(question: str, banks: list[str]) -> None:
         except LLMUnavailable:
             st.error(API_ERROR_MSG)
             return
-        except (FileNotFoundError, SetupError):
+        except (FileNotFoundError, SetupError, IndexUnavailable):
             st.error(SETUP_MSG)
             return
         except Exception:

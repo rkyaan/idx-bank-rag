@@ -45,6 +45,14 @@ EMBED_MAX_TOKENS = 512
 
 RETRIEVAL_METHODS: tuple[str, ...] = ("hybrid", "vector", "bm25")
 
+# The index is too large for git and too slow to rebuild on a hosted machine, so it
+# ships as a release asset and the app downloads it on first start.
+INDEX_BUNDLE_NAME = "idx-bank-rag-index.tar.gz"
+INDEX_BUNDLE_URL = (
+    "https://github.com/rkyaan/idx-bank-rag/releases/download/index-v1/" + INDEX_BUNDLE_NAME
+)
+INDEX_BUNDLE_SHA256 = "36d4a748ae928ab9fa5aefda0abd5f14ffa1f148ed991c0ce2d7048615c487c5"
+
 # Vague questions undersell themselves to the embedding model: "risiko utama" is a
 # short, generic query, while the answer lives in a section full of specific terms.
 # Appending that vocabulary widens both the dense and the keyword search. Keys are
@@ -101,6 +109,8 @@ class Settings:
     llm_api_key: str | None = None
     data_dir: Path = DEFAULT_DATA_DIR
     index_dir: Path = DEFAULT_INDEX_DIR
+    index_bundle_url: str = INDEX_BUNDLE_URL
+    index_bundle_sha256: str = INDEX_BUNDLE_SHA256
     embed_model: str = EMBED_MODEL
     embed_dim: int = EMBED_DIM
     chunk_min_tokens: int = 400
@@ -167,6 +177,8 @@ class Settings:
         return cls(
             llm_model=_lookup("LLM_MODEL"),
             llm_api_key=_lookup("LLM_API_KEY") or _lookup("GEMINI_API_KEY"),
+            index_bundle_url=_lookup("INDEX_BUNDLE_URL") or INDEX_BUNDLE_URL,
+            index_bundle_sha256=_lookup("INDEX_BUNDLE_SHA256") or INDEX_BUNDLE_SHA256,
             chunk_min_tokens=_as_int("CHUNK_MIN_TOKENS", 400),
             chunk_max_tokens=_as_int("CHUNK_MAX_TOKENS", 450),
             chunk_overlap_ratio=_as_float("CHUNK_OVERLAP_RATIO", 0.12),

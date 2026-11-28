@@ -21,6 +21,10 @@ data/raw/*.pdf
 data/raw/*.PDF
 !data/raw/.gitkeep
 
+# Derived retrieval index, published as a release asset instead of committed
+index/
+dist/
+
 # OS/editor
 .DS_Store
 *.log

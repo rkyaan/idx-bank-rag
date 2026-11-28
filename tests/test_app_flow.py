@@ -7,9 +7,11 @@ without loading the index or spending free-tier quota.
 from __future__ import annotations
 
 import pytest
+import streamlit as st
 from streamlit.testing.v1 import AppTest
 
-import app
+import app as app_module
+import rag.index_bundle
 import rag.pipeline
 from rag.config import PROJECT_ROOT, Settings
 from rag.generator import LLMUnavailable
@@ -35,6 +37,8 @@ def chat(monkeypatch: pytest.MonkeyPatch) -> tuple[AppTest, list[tuple[str, list
 
     monkeypatch.setattr(rag.pipeline, "answer_question", fake_answer_question)
     monkeypatch.setattr(rag.pipeline, "get_answerer", lambda *args, **kwargs: None)
+    monkeypatch.setattr(rag.index_bundle, "ensure_index", lambda *args, **kwargs: None)
+    st.cache_resource.clear()
 
     app = AppTest.from_file(str(APP_PATH), default_timeout=60)
     app.run()
@@ -168,12 +172,29 @@ def test_a_missing_index_shows_the_setup_message(chat, monkeypatch: pytest.Monke
     ]
 
 
+def test_a_failed_index_download_shows_the_setup_message(
+    chat, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    app, _ = chat
+
+    def unavailable(*args, **kwargs):
+        raise app_module.IndexUnavailable("release asset unreachable")
+
+    monkeypatch.setattr(rag.index_bundle, "ensure_index", unavailable)
+    app_module.load_answerer.clear()
+    ask(app, "Bagaimana rasio NPL?")
+
+    assert [error.value for error in app.error] == [
+        "Dokumen atau kunci API belum siap, jadi jawaban belum bisa dibuat."
+    ]
+
+
 def test_a_missing_api_key_is_reported_as_a_setup_problem(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     unconfigured = Settings(llm_model=None, llm_api_key=None)
-    monkeypatch.setattr(app.Settings, "from_env", classmethod(lambda cls: unconfigured))
-    app.load_answerer.clear()
+    monkeypatch.setattr(app_module.Settings, "from_env", classmethod(lambda cls: unconfigured))
+    app_module.load_answerer.clear()
 
-    with pytest.raises(app.SetupError):
-        app.load_answerer()
+    with pytest.raises(app_module.SetupError):
+        app_module.load_answerer()
